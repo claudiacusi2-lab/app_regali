@@ -68,6 +68,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .take { background: var(--pink); }
 .take[aria-pressed='true'] { background: var(--ink); color: #fff; }
 .empty { font-size: 20px; font-weight: 500; margin: 0; }
+.foot { display: flex; justify-content: center; padding-top: 24px; }
+.foot a { font-size: 14px; font-weight: 500; opacity: 0.7; padding: 8px 12px; }
+.foot a:hover, .foot a:focus-visible { opacity: 1; }
 
 /* Panels & forms */
 .panel { background: var(--paper); border: var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; display: flex; flex-direction: column; gap: 14px; }

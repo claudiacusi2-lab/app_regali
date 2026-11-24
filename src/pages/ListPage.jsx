@@ -89,6 +89,10 @@ export default function ListPage() {
           <ReminderForm item={asking} showTitleChip onDone={() => setAsking(null)} onSkip={() => setAsking(null)} />
         </div>
       )}
+
+      <footer className="foot">
+        <a href="#/admin">🔒 Area riservata</a>
+      </footer>
     </main>
   );
 }
