@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import TopBar from '../components/TopBar.jsx';
 import Photo from '../components/Photo.jsx';
+import ReminderForm from '../components/ReminderForm.jsx';
 import TakeButton from '../components/TakeButton.jsx';
 import { useStore, stars, priorityLabel, categoryLabel, formatPrice } from '../store.js';
 
 export default function DetailPage({ id }) {
   const { items, loading } = useStore();
   const item = items.find((x) => x.id === id);
+  const [askReminder, setAskReminder] = useState(false);
 
   if (loading) {
     return (
@@ -67,7 +70,11 @@ export default function DetailPage({ id }) {
             </section>
           )}
 
-          <TakeButton item={item} big />
+          <TakeButton item={item} big onClaimed={() => setAskReminder(true)} />
+
+          {askReminder && item.takenByMe && (
+            <ReminderForm item={item} onDone={() => setAskReminder(false)} onSkip={() => setAskReminder(false)} />
+          )}
         </div>
       </div>
     </main>
