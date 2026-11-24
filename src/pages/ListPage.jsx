@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import TopBar from '../components/TopBar.jsx';
 import Photo from '../components/Photo.jsx';
-import ReminderForm from '../components/ReminderForm.jsx';
 import { FILTERS, OWNER_NAME, SITE_TITLE } from '../config.js';
 import TakeButton from '../components/TakeButton.jsx';
 import { useStore, stars, priorityLabel, formatPrice } from '../store.js';
@@ -9,7 +8,6 @@ import { useStore, stars, priorityLabel, formatPrice } from '../store.js';
 export default function ListPage() {
   const { items, loading, error } = useStore();
   const [filter, setFilter] = useState('tutti');
-  const [asking, setAsking] = useState(null); // item per cui chiedere il promemoria
   const [copied, setCopied] = useState(false);
 
   const active = FILTERS.find((f) => f.key === filter);
@@ -78,17 +76,11 @@ export default function ListPage() {
             <h2><a href={`#/regalo/${encodeURIComponent(item.id)}`}>{item.title}</a></h2>
             <div className="card-foot">
               <span className="price">{formatPrice(item.price)}</span>
-              <TakeButton item={item} onClaimed={setAsking} />
+              <TakeButton item={item} />
             </div>
           </article>
         ))}
       </div>
-
-      {asking && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-label="Promemoria via email" onClick={(e) => e.target === e.currentTarget && setAsking(null)}>
-          <ReminderForm item={asking} showTitleChip onDone={() => setAsking(null)} onSkip={() => setAsking(null)} />
-        </div>
-      )}
     </main>
   );
 }
