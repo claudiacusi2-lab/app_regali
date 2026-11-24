@@ -15,6 +15,16 @@ const setState = (patch) => {
   emit();
 };
 
+// Codice casuale univoco. crypto.randomUUID esiste solo su https: su http usiamo getRandomValues.
+function newId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+
 function readMyClaims() {
   try {
     return JSON.parse(localStorage.getItem(MY_CLAIMS_KEY)) || {};
@@ -82,7 +92,7 @@ export function useItems() {
 
 // ---------------------------------------------------------------- "Lo prendo io"
 export async function claim(itemId) {
-  const token = crypto.randomUUID();
+  const token = newId();
   const { error } = await supabase.from('claims').insert({ item_id: itemId, token });
   if (error) {
     await refresh();
@@ -155,7 +165,7 @@ export async function removeItem(id) {
 }
 
 export async function uploadPhoto(blob) {
-  const path = `${crypto.randomUUID()}.jpg`;
+  const path = `${newId()}.jpg`;
   const { error } = await supabase.storage.from('photos').upload(path, blob, { contentType: 'image/jpeg' });
   if (error) return { url: '', error: 'Caricamento della foto non riuscito.' };
   return { url: supabase.storage.from('photos').getPublicUrl(path).data.publicUrl, error: '' };

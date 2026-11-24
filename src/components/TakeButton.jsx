@@ -9,7 +9,12 @@ export default function TakeButton({ item, onClaimed, big = false }) {
   async function onClick() {
     setBusy(true);
     setError('');
-    const err = item.takenByMe ? await unclaim(item.id) : await claim(item.id);
+    let err;
+    try {
+      err = item.takenByMe ? await unclaim(item.id) : await claim(item.id);
+    } catch {
+      err = 'Non ci sono riuscito, riprova.';
+    }
     setBusy(false);
     if (err) setError(err);
     else if (!item.takenByMe && onClaimed) onClaimed(item);
