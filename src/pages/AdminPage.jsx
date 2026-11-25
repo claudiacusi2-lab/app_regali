@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import TopBar from '../components/TopBar.jsx';
 import { colorFor } from '../components/Photo.jsx';
 import { CATEGORIES, PRIORITY_LABELS } from '../config.js';
-import { useStore, addItem, updateItem, removeItem, uploadPhoto, stars, categoryLabel, formatPrice } from '../store.js';
+import { useStore, addItem, updateItem, removeItem, freeItem, uploadPhoto, stars, categoryLabel, formatPrice } from '../store.js';
 import { useAdminSession, signIn, signOut } from '../auth.js';
 
 const EMPTY = { title: '', price: '', category: 'altro', stars: 3, notes: '', image: '', shops: [{ name: '', url: '' }] };
@@ -154,6 +154,13 @@ function Editor() {
     else if (editingId === item.id) reset();
   }
 
+  async function free(item) {
+    if (!window.confirm(`Togliere la prenotazione di «${item.title}»?\nTornerà libero e chi l'aveva preso non riceverà più il promemoria.`)) return;
+    setError('');
+    const err = await freeItem(item.id);
+    if (err) setError(err);
+  }
+
   const shownImage = preview || form.image;
 
   return (
@@ -262,6 +269,9 @@ function Editor() {
             <span className="status" style={{ background: surprise ? 'var(--ground)' : item.taken ? 'var(--pink)' : 'var(--mint)' }}>
               {surprise ? 'Segreto' : item.taken ? 'Già preso' : 'Libero'}
             </span>
+            {!surprise && item.taken && (
+              <button type="button" className="btn" onClick={() => free(item)} aria-label={`Libera ${item.title}`}>Libera</button>
+            )}
             <button type="button" className="btn" onClick={() => startEdit(item)}>Modifica</button>
             <button type="button" className="btn btn-icon" aria-label={`Elimina ${item.title}`} onClick={() => remove(item)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

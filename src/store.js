@@ -164,6 +164,17 @@ export async function removeItem(id) {
   return '';
 }
 
+// Toglie la prenotazione di qualunque persona (solo l'admin può farlo: lo controlla il database).
+export async function freeItem(id) {
+  const { data, error } = await supabase.from('claims').delete().eq('item_id', id).select('item_id');
+  if (error || !data?.length) {
+    await refresh();
+    return 'Non sono riuscito a liberarlo. Sei ancora collegata?';
+  }
+  await refresh();
+  return '';
+}
+
 export async function uploadPhoto(blob) {
   const path = `${newId()}.jpg`;
   const { error } = await supabase.storage.from('photos').upload(path, blob, { contentType: 'image/jpeg' });
